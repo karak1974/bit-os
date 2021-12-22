@@ -5,13 +5,12 @@ BUSYBOX_VERSION=1.34.1
 KERNEL_MAJOR=$(echo $KERNEL_VERSION | sed 's/\([0-9]*\)[^0-9].*/\1/')
 BITOS_VERSION=0.1
 
-#Downloading sources
+#Handle sources
 mkdir -p src
 cd src
-	#Kernel
-	echo "[BITOS $BITOS_VERSION] Building Kernel $KERNEL_VERSION"
+	#Downloading sources
+	#Download Kernel
 	echo "[LINUX $KERNEL_VERSION] Downloading"
-
 	if [ -f "linux-$KERNEL_VERSION.tar.xz" ]; then
 		echo "[LINUX $KERNEL_VERSION] Destination file already exist"
 	else
@@ -19,17 +18,8 @@ cd src
 		tar -xf linux-$KERNEL_VERSION.tar.xz
 	fi
 
-	echo "[LINUX $KERNEL_VERSION] Compiling"
-	cd linux-$KERNEL_VERSION
-		make defconfig
-		make -j8 || exit
-	cd ..
-	echo "[LINUX $KERNEL_VERSION] Compile done"	
-
-	#BusyBox
-	echo "[BITOS $BITOS_VERSION] Building BusyBox $BUSYBOX_VERSION"
+	#Download BusyBox
 	echo "[BUSYBOX $BUSYBOX_VERSION] Downloading"
-
 	if [ -f "busybox-$BUSYBOX_VERSION.tar.bz2" ]; then
 		echo "[BUSYBOX $BUSYBOX_VERSION] Destination file already exist"
 	else
@@ -37,6 +27,17 @@ cd src
 		tar -xf busybox-$BUSYBOX_VERSION.tar.bz2
 	fi
 
+	#Compile Kernel
+	echo "[BITOS $BITOS_VERSION] Building Kernel $KERNEL_VERSION"
+	echo "[LINUX $KERNEL_VERSION] Compiling"
+	cd linux-$KERNEL_VERSION
+		make defconfig
+		make -j8 || exit
+	cd ..
+	echo "[LINUX $KERNEL_VERSION] Compile done"	
+
+	#Compile BusyBox
+	echo "[BITOS $BITOS_VERSION] Building BusyBox $BUSYBOX_VERSION"
 	echo "[BUSYBOX $BUSYBOX_VERSION] Compiling"
 	cd busybox-$BUSYBOX_VERSION
 		make defconfig
@@ -81,7 +82,4 @@ cd initrd
 
 cd ..
 
-
-
-echo "[BITOS $BITOS_VERSION] Exiting"
-
+echo "[BITOS $BITOS_VERSION] Everything is done, exiting"
